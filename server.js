@@ -24,7 +24,7 @@ var pg = require('pg');
 var config = {
     user:"mobstaz",
     database:"application_daily_info_dev",
-    password:"l00nie",
+    password:"*************************",
     host:'pgm-bp1c326ytv3p97ef14830.pg.rds.aliyuncs.com',
     port:3433,
     // 扩展属性
