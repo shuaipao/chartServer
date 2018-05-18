@@ -334,10 +334,10 @@ function dec(data) {
 }
 
 
-
 app.get("/chartART", function (req, res) {
     var data = fs.readFileSync('./json/dec.json').toString();
     var classfiyName = dec(JSON.parse(data));
+    console.log(classfiyName);
     var weeks = getFriday("2018-04-13", 17);
     var backData = {};
     var ratio = {};
@@ -348,18 +348,20 @@ app.get("/chartART", function (req, res) {
             for (var j = 0; j < weeks.length; j++) {
 
                 if (new Date(classfiyName[i][k].applyDate) >= new Date(weeks[j][6]) && new Date(classfiyName[i][k].applyDate) <= new Date(weeks[j][0])) {
-                    backData[i][weeks[j][6] + "-" + weeks[j][0]] = backData[i][weeks[j][6] + "-" + weeks[j][0]] ? backData[i][weeks[j][6] + "-" + weeks[j][0]] : 0;
-                    backData[i].all ++;
+                    backData[i][weeks[j][6] + "-" + weeks[j][0]] = backData[i][weeks[j][6] + "-" + weeks[j][0]] ? backData[i][weeks[j][6] + "-" + weeks[j][0]] : [0, 0];
+                    backData[i].all++;
                     if (classfiyName[i][k].decCode == "SUCCESS") {
-                        backData[i][weeks[j][6] + "-" + weeks[j][0]]++;
+                        backData[i][weeks[j][6] + "-" + weeks[j][0]][0]++;
                     }
+                    backData[i][weeks[j][6] + "-" + weeks[j][0]][1]++;
+
                 } else {
-                    backData[i][weeks[j][6] + "-" + weeks[j][0]] = backData[i][weeks[j][6] + "-" + weeks[j][0]] ? backData[i][weeks[j][6] + "-" + weeks[j][0]] : 0;
+                    backData[i][weeks[j][6] + "-" + weeks[j][0]] = backData[i][weeks[j][6] + "-" + weeks[j][0]] ? backData[i][weeks[j][6] + "-" + weeks[j][0]] : [0, 0];
                 }
             }
         }
-
     }
+    // console.log(backData);
     res.send(backData);
 });
 
