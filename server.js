@@ -117,9 +117,8 @@ function dataBack(req, data) {
 
     var lastWeekDays = getBeforeDay(req.query.applyDate, 6);
     var last30Days = getBeforeDay(req.query.applyDate, 29);
-
     for (var i = 0; i < data.length; i++) {
-        if (((req.query.productName == "全部") || (req.query.productName == data[i].productName)) && ((req.query.channelId == "0") || (req.query.channelId == data[i].channelId)) && ((req.query.isNew == "All") || ((req.query.isNew == 'isNew') && data[i].isNew)) && req.query.scoreName == data[i].scoreName) {
+        if (((req.query.productName == "全部") || (req.query.productName == data[i].productName)) && ((req.query.channelId == "0") || (req.query.channelId == data[i].channelId)) && ((req.query.isNew == "All") || (req.query.isNew == data[i].isNew)) && req.query.scoreName == data[i].scoreName) {
             if (new Date(data[i].applyDate) <= new Date(req.query.applyDate) && new Date(data[i].applyDate) >= new Date(last30Days)) {
                 backData.last30Days.tableArr.push(data[i]);
                 if (new Date(data[i].applyDate) <= new Date(req.query.applyDate) && new Date(data[i].applyDate) >= new Date(lastWeekDays)) {
@@ -236,7 +235,7 @@ app.get("/productsData", function (req, res) {
         backData[i] = Array.apply(null, Array(arrlength)).map(() => 0);
         backData["_" + i] = Array.apply(null, Array(arrlength)).map(() => 0);
         for (var j = 0; j < classfiyName[i].length; j++) {
-            if (((req.query.productName == "全部") || (req.query.productName == classfiyName[i][j].productName)) && ((req.query.channelId == "0") || (req.query.channelId == classfiyName[i][j].channelId)) && ((req.query.isNew == "All") || ((req.query.isNew == 'isNew') && classfiyName[i][j].isNew)) && req.query.scoreName == classfiyName[i][j].scoreName) {
+            if (((req.query.productName == "全部") || (req.query.productName == classfiyName[i][j].productName)) && ((req.query.channelId == "0") || (req.query.channelId == classfiyName[i][j].channelId)) && ((req.query.isNew == "All") || (req.query.isNew == classfiyName[i][j].isNew)) && req.query.scoreName == classfiyName[i][j].scoreName) {
                 if (new Date(classfiyName[i][j].applyDate) <= new Date(req.query.dayNb[1]) && new Date(classfiyName[i][j].applyDate) >= new Date(req.query.dayNb[0])) {
                     if (req.query.sectionIpt == "true") {
                         for (var l = 0; l < arrlength; l++) {
@@ -386,23 +385,14 @@ function dec(data) {
     return backData;
 }
 
-<<<<<<< HEAD
 //chartART接口API
-=======
-
-
->>>>>>> parent of 353b886... 申请分布/批复分布
 app.get("/chartART", function (req, res) {
     // console.log(req.query.date);
     // var start = new Date().getTime();
     var data = fs.readFileSync('./json/dec.json').toString();
     var classfiyName = dec(JSON.parse(data));
-<<<<<<< HEAD
     // console.log(classfiyName);
     var weeks = getFriday(req.query.date, req.query.weeksNb);
-=======
-    var weeks = getFriday("2018-04-13", 17);
->>>>>>> parent of 353b886... 申请分布/批复分布
     var backData = {};
     var ratio = {};
     for (var i in classfiyName) {
@@ -412,25 +402,23 @@ app.get("/chartART", function (req, res) {
             for (var j = 0; j < weeks.length; j++) {
 
                 if (new Date(classfiyName[i][k].applyDate) >= new Date(weeks[j][6]) && new Date(classfiyName[i][k].applyDate) <= new Date(weeks[j][0])) {
-                    backData[i][weeks[j][6] + "-" + weeks[j][0]] = backData[i][weeks[j][6] + "-" + weeks[j][0]] ? backData[i][weeks[j][6] + "-" + weeks[j][0]] : 0;
-                    backData[i].all ++;
+                    backData[i][weeks[j][6] + "-" + weeks[j][0]] = backData[i][weeks[j][6] + "-" + weeks[j][0]] ? backData[i][weeks[j][6] + "-" + weeks[j][0]] : [0, 0];
+                    backData[i].all++;
                     if (classfiyName[i][k].decCode == "SUCCESS") {
-                        backData[i][weeks[j][6] + "-" + weeks[j][0]]++;
+                        backData[i][weeks[j][6] + "-" + weeks[j][0]][0]++;
                     }
+                    backData[i][weeks[j][6] + "-" + weeks[j][0]][1]++;
+
                 } else {
-                    backData[i][weeks[j][6] + "-" + weeks[j][0]] = backData[i][weeks[j][6] + "-" + weeks[j][0]] ? backData[i][weeks[j][6] + "-" + weeks[j][0]] : 0;
+                    backData[i][weeks[j][6] + "-" + weeks[j][0]] = backData[i][weeks[j][6] + "-" + weeks[j][0]] ? backData[i][weeks[j][6] + "-" + weeks[j][0]] : [0, 0];
                 }
             }
         }
-
     }
-<<<<<<< HEAD
     // console.log(backData);
     // var end = new Date().getTime();
     // console.log(end - start + "ms");
 
-=======
->>>>>>> parent of 353b886... 申请分布/批复分布
     res.send(backData);
 });
 
