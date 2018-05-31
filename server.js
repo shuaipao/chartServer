@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require('path');
 const join = path.join;
 var app = express();
+//cors(Cross-Origin Resource Sharing);
 app.all("*", function (req, res, next) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Credentials", true);
@@ -14,8 +15,9 @@ app.all("*", function (req, res, next) {
     next();
 });
 app.use(bodyParser.urlencoded({extended: false}));
-
-//文件夹监控
+//监听端口
+app.listen(6780);
+//文件夹监控chokidar
 var watcher = null;
 var ready = false;
 var watchPath = './json/table02';
@@ -65,7 +67,7 @@ watcher.on('add', addFileListener)
         log.info('Error happened', error);
     })
     .on('ready', function () {
-        console.info('Initial scan complete. Ready for changes.');
+        console.info('文件监控已ready.');
         ready = true
     });
 
@@ -159,10 +161,8 @@ function dataBack(req, data) {
                         }
                     }
                 }
-
             }
         }
-
     }
 
 
@@ -218,6 +218,7 @@ app.get("/upscore", function (req, res) {
 
 });
 
+//productsData接口(处理所有产品score分布)
 app.get("/productsData", function (req, res) {
     var data = fs.readFileSync('./json/applications.json').toString();
     var classfiyName = dec(JSON.parse(data));
@@ -288,7 +289,7 @@ function findSync(startPath) {
             let fPath = join(path, val);
             let stats = fs.statSync(fPath);
             if (stats.isDirectory()) finder(fPath);
-            if (stats.isFile() && fPath != "json\\table02\\template.json") result.push(val.split(".json")[0]);
+            if (stats.isFile() && fPath != "json\\table02\\template.json" && (fPath.split('.json')[1] == "")) result.push(val.split(".json")[0]);
         });
     }
 
@@ -349,20 +350,20 @@ function getFriday(date, n) {
     } else {
         d = new Date();
     }
-    var dd = d.getDay();
-    // var ddd = dd > 5 ? dd - 12 : dd - 5;
-    var ddd = (dd >= 5 ? dd - 5 : 2 + dd);
-
+    // var dd = d.getDay();
+    // // var ddd = dd > 5 ? dd - 12 : dd - 5;
+    // // var ddd = (dd >= 5 ? dd - 5 : 2 + dd);
+    // console.log(dd);
     var dateArrs = [];
-    var lastFriday = getBeforeDay(d, ddd);
     for (var j = 0; j < n; j++) {
         var dateArr = [];
         for (var i = 0; i < 7; i++) {
-            dateArr.push(getBeforeDay(lastFriday, i))
+            dateArr.push(getBeforeDay(d, i))
         }
-        lastFriday = getBeforeDay(dateArr[6], 1);
+        d = getBeforeDay(dateArr[6], 1);
         dateArrs[j] = dateArr;
     }
+    // console.log(dateArrs);
     return dateArrs
 }
 
@@ -390,6 +391,7 @@ function dec(data) {
 app.get("/chartART", function (req, res) {
     // console.log(req.query.date);
     // var start = new Date().getTime();
+    // console.log(req.query.channelId);
     var data = fs.readFileSync('./json/dec.json').toString();
     var classfiyName = dec(JSON.parse(data));
     // console.log(classfiyName);
@@ -401,7 +403,7 @@ app.get("/chartART", function (req, res) {
         ratio[i] = {};
         for (var k = 0; k < classfiyName[i].length; k++) {
             for (var j = 0; j < weeks.length; j++) {
-                if (new Date(classfiyName[i][k].applyDate) >= new Date(weeks[j][6]) && new Date(classfiyName[i][k].applyDate) <= new Date(weeks[j][0])  && ((req.query.isNew == "All") || (req.query.isNew == classfiyName[i][k].isNew))) {
+                if (((req.query.channelId == "0") || (req.query.channelId == classfiyName[i][k].channelId)) && new Date(classfiyName[i][k].applyDate) >= new Date(weeks[j][6]) && new Date(classfiyName[i][k].applyDate) <= new Date(weeks[j][0]) && ((req.query.isNew == "All") || (req.query.isNew == classfiyName[i][k].isNew))) {
                     backData[i][weeks[j][6] + "-" + weeks[j][0]] = backData[i][weeks[j][6] + "-" + weeks[j][0]] ? backData[i][weeks[j][6] + "-" + weeks[j][0]] : [0, 0];
                     backData[i].all++;
                     if (classfiyName[i][k].decCode == "SUCCESS") {
@@ -412,6 +414,7 @@ app.get("/chartART", function (req, res) {
                 } else {
                     backData[i][weeks[j][6] + "-" + weeks[j][0]] = backData[i][weeks[j][6] + "-" + weeks[j][0]] ? backData[i][weeks[j][6] + "-" + weeks[j][0]] : [0, 0];
                 }
+
             }
         }
     }
@@ -422,6 +425,3 @@ app.get("/chartART", function (req, res) {
     res.send(backData);
 });
 
-
-//监听端口
-app.listen(6780);
