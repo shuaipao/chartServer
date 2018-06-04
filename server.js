@@ -231,14 +231,13 @@ app.get("/productsData", function (req, res) {
     } else {
         arrlength = jscoreImmediate.length / 2;
     }
-
     // var chartArr =
     for (var i in classfiyName) {
         backData[i] = Array.apply(null, Array(arrlength)).map(() => 0);
         backData["_" + i] = Array.apply(null, Array(arrlength)).map(() => 0);
         for (var j = 0; j < classfiyName[i].length; j++) {
-            if (((req.query.productName == "全部") || (req.query.productName == classfiyName[i][j].productName)) && ((req.query.channelId == "0") || (req.query.channelId == classfiyName[i][j].channelId)) && ((req.query.isNew == "All") || (req.query.isNew == classfiyName[i][j].isNew)) && req.query.scoreName == classfiyName[i][j].scoreName) {
-                if (new Date(classfiyName[i][j].applyDate) <= new Date(req.query.dayNb[1]) && new Date(classfiyName[i][j].applyDate) >= new Date(req.query.dayNb[0])) {
+            if (new Date(classfiyName[i][j].applyDate) <= new Date(req.query.dayNb[1]) && new Date(classfiyName[i][j].applyDate) >= new Date(req.query.dayNb[0])) {
+                if (((req.query.productName == "全部") || (req.query.productName == classfiyName[i][j].productName)) && ((req.query.channelId == "0") || (req.query.channelId == classfiyName[i][j].channelId)) && ((req.query.isNew == "All") || (req.query.isNew == classfiyName[i][j].isNew)) && req.query.scoreName == classfiyName[i][j].scoreName) {
                     if (req.query.sectionIpt == "true") {
                         for (var l = 0; l < arrlength; l++) {
                             if (classfiyName[i][j][classfiyName[i][j].scoreName] >= l * req.query.subSection && classfiyName[i][j][classfiyName[i][j].scoreName] < ((l + 1) * req.query.subSection)) {
@@ -254,6 +253,8 @@ app.get("/productsData", function (req, res) {
                     }
                 }
             }
+            // console.log(backData[i][j]);
+
         }
         var allNum = 0;
         backData["_" + i] = [];
@@ -354,6 +355,7 @@ function getFriday(date, n) {
     // // var ddd = dd > 5 ? dd - 12 : dd - 5;
     // // var ddd = (dd >= 5 ? dd - 5 : 2 + dd);
     // console.log(dd);
+
     var dateArrs = [];
     for (var j = 0; j < n; j++) {
         var dateArr = [];
@@ -371,8 +373,8 @@ function getFriday(date, n) {
 function dec(data) {
     var backData = {};
     var productNames = JSON.parse(fs.readFileSync('./json/filterData.json').toString())[0].productName;
+    // console.log(productNames);
     for (var i = 0; i < data.length; i++) {
-
         for (var l = 0; l < productNames.length; l++) {
             if (data[i].productName == productNames[l]) {
                 if (backData[data[i].productName]) {
@@ -384,6 +386,7 @@ function dec(data) {
             }
         }
     }
+    // console.log(backData);
     return backData;
 }
 
