@@ -255,11 +255,10 @@ app.get("/productsData", function (req, res) {
         backData[i] = Array.apply(null, Array(arrlength)).map(() => 0);
         backData["_" + i] = Array.apply(null, Array(arrlength)).map(() => 0);
         for (var j = 0; j < classfiyName[i].length; j++) {
-            console.log(333);
             if (new Date(classfiyName[i][j].applyDate) <= new Date(req.query.dayNb[1]) && new Date(classfiyName[i][j].applyDate) >= new Date(req.query.dayNb[0])) {
-                console.log(22);
+
                 if (productName(classfiyName[i][j], req.query) && channelId(classfiyName[i][j], req.query) && isNew(classfiyName[i][j], req.query) && scoreName(classfiyName[i][j], req.query)) {
-                    console.log(11);
+
                     if (req.query.sectionIpt == "true") {
                         for (var l = 0; l < arrlength; l++) {
                             if (classfiyName[i][j][classfiyName[i][j].scoreName] >= l * req.query.subSection && classfiyName[i][j][classfiyName[i][j].scoreName] < ((l + 1) * req.query.subSection)) {
