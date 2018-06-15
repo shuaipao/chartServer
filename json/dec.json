@@ -259,7 +259,15 @@
     "isNew": 0,
     "applyDate": "2018-01-25",
     "decCode": "SUCCESS"
-  },
+  },{
+  "applicationId": 1031095,
+  "idNumber": "450111199005132715",
+  "productName": "易借款_前期收费_C",
+  "channelId":"16",
+  "isNew": 0,
+  "applyDate": "2018-01-25",
+  "decCode": "SUCCESS"
+},
   {
     "applicationId": 1030734,
     "idNumber": "450111199005132715",
