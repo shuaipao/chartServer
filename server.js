@@ -31,8 +31,8 @@ chokidar(findSync, './json');
 app.listen(6780);
 
 //  获取JSON数据
-class PathData{
-    constructor(path){
+class PathData {
+    constructor(path) {
         this.data = JSON.parse(fs.readFileSync(path).toString() ? fs.readFileSync(path).toString() : '[]');
     }
 }
@@ -250,7 +250,7 @@ for (let i = 0, l = fileNames.length; i < l; i++) {
 //dec.json
 
 //chartART接口API
-app.get("/chartART", function (req, res) {
+app.get("/chartART", (req, res) => {
 
     let data = new PathData('./json/dec.json').data;
 
@@ -291,3 +291,39 @@ app.get("/chartART", function (req, res) {
     });
     res.send({backData, dateArr});
 });
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//embedding selector
+
+function appData(name) {
+    let data = new PathData(`./json/embedding/${name}.json`).data;
+    let dataTitle = [];
+    data.forEach(val => {
+        dataTitle.push(val.appname);
+    });
+    return {data, dataTitle}
+}
+let ebdFileNames = findSync('./json/embedding');
+app.get("/ebdFailArr", (req, res) => {
+    res.send(ebdFileNames);
+});
+
+app.get("/embeddingTitle", (req, res) => {
+    let {dataTitle} = appData();
+    res.send(dataTitle);
+});
+
+for(let i = 0; i < ebdFileNames.length; i++){
+    app.get(`/${ebdFileNames[i]}`, (req, res) => {
+        let {data, dataTitle} = appData(ebdFileNames[i]);
+        for (let i = 0, l = data.length; i < l; i++) {
+            for (let j = 0, k = data[i].mostSimApp.length; j < k; j++) {
+                data[i].mostSimApp[j] += `:${data[i].similarity[j].toFixed(3)}`
+            }
+        }
+        res.send({data, dataTitle});
+    });
+}
+
