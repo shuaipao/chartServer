@@ -103,9 +103,7 @@ function applicationsData(req) {
     }
 }
 
-//  applications接口
-app.get("/applications", (req, res) => {
-
+function applicationBackData(req,){
     let {chartArr, pathData, names, secIpt, ratio} = applicationsData(req);
 
     class BackData {
@@ -148,8 +146,20 @@ app.get("/applications", (req, res) => {
 
     //计算比例tadioData
     Object.keys(backData).filter(val => ratio(backData[val]));
+    return backData;
+}
 
-    res.send(backData);
+//  applications接口
+app.get("/appscore", (req, res) => {
+    res.send(applicationBackData(req));
+});
+//  applications接口
+app.get("/jscore", (req, res) => {
+    res.send(applicationBackData(req));
+});
+//  applications接口
+app.get("/upscore", (req, res) => {
+    res.send(applicationBackData(req));
 });
 
 //  productsData接口
